@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+
+    <!-- Page Heading -->
+    <h2 class="fw-bold mb-5 text-center text-gradient animate__animated animate__fadeInDown">
+        Data Overview
+    </h2>
+
+    <!-- Dataset Info -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="glass-card p-4 shadow-sm animate__animated animate__fadeInUp">
+                <h5 class="fw-bold mb-3">📂 Dataset Information</h5>
+                <p><i class="bi bi-file-earmark-text me-2"></i>Total Rows: <b>{{ total_rows }}</b></p>
+                <p><i class="bi bi-columns-gap me-2"></i>Total Columns: <b>{{ total_cols }}</b></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sample Data Table (Show first) -->
+    <div class="glass-card p-4 shadow-sm animate__animated animate__fadeInUp animate__delay-1s">
+        <h5 class="fw-bold mb-3">🔍 Sample Data (First 10 Rows)</h5>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle text-center">
+                <thead class="table-dark">
+                    <tr>
+                        {% for col in columns %}
+                        <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in sample_data %}
+                    <tr class="{{ 'table-light' if loop.index0 % 2 == 0 else 'table-secondary' }}">
+                        {% for col in columns %}
+                        <td>{{ row[col] }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Numeric Column Stats & Top Categories (After sample data) -->
+    <div class="row g-4 mt-4">
+        <!-- Numeric Column Stats -->
+        <div class="col-md-6">
+            <div class="glass-card p-4 shadow-sm animate__animated animate__fadeInUp animate__delay-2s">
+                <h5 class="fw-bold mb-3">📊 Numeric Column Stats</h5>
+                <ul class="list-group list-group-flush">
+                    {% for col, stats in numeric_stats.items() %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>{{ col }}</span>
+                        <span class="badge bg-info text-dark">Mean: {{ stats.mean }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Top Categories -->
+        <div class="col-md-6">
+            <div class="glass-card p-4 shadow-sm animate__animated animate__fadeInUp animate__delay-3s">
+                <h5 class="fw-bold mb-3">📋 Top Categories</h5>
+                <ul class="list-group list-group-flush">
+                    {% for col, top_val in categorical_top.items() %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>{{ col }}</span>
+                        <span class="badge bg-warning text-dark">{{ top_val }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Animate.css & Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+
+<style>
+.text-gradient {
+    background: linear-gradient(135deg,#42a5f5,#81d4fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+.glass-card {
+    background: rgba(255,255,255,0.07);
+    border-radius: 1rem;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 1.5rem;
+}
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(65,105,225,0.1);
+    transition: background-color 0.3s ease;
+}
+</style>
+{% endblock %}

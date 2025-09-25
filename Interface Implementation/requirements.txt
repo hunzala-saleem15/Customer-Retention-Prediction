@@ -1,0 +1,15 @@
+Flask==2.3.3
+pandas==2.1.0
+numpy==1.26.4
+matplotlib==3.7.2
+seaborn==0.12.2
+shap==0.44.0
+reportlab==4.0.0
+openpyxl==3.1.2
+xgboost==1.7.6
+joblib==1.3.2
+pdfkit
+scikit-learn==1.6.1 
+tensorflow==2.12 
+keras==2.12
+plotly

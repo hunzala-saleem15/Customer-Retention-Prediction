@@ -1,0 +1,156 @@
+<style>
+/* Full screen background container */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+/* Transparent login card with glassmorphism */
+.login-card {
+    width: 380px;
+    padding: 2rem;
+    border-radius: 1.2rem;
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
+    position: relative;
+    z-index: 2;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+}
+
+/* Login heading */
+.login-card h3 {
+    color: #fff;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+}
+
+/* Styled input fields – taller and full width */
+.login-card .form-control {
+    width: 100%;              /* Full width */
+    height: 3.2rem;           /* Taller input */
+    background-color: rgba(255,255,255,0.2);
+    border: none;
+    border-radius: 0.6rem;
+    color: #fff;
+    padding: 0 1rem;          /* Horizontal padding */
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card .form-control::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+
+.login-card .form-control:focus {
+    background-color: rgba(255,255,255,0.3);
+    box-shadow: 0 0 10px rgba(129,212,250,0.6);
+    outline: none;
+}
+
+/* Login button */
+.login-card .btn-login {
+    border-radius: 0.7rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    width: 100%;
+    padding: 0.8rem 0;  /* Slightly taller button */
+    background: linear-gradient(135deg, #42a5f5, #81d4fa);
+    border: none;
+    color: #fff;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.login-card .btn-login:hover {
+    background: linear-gradient(135deg, #64b5f6, #b3e5fc);
+    transform: translateY(-2px);
+}
+
+/* Footer text */
+.login-card .signup-text {
+    text-align: center;
+    margin-top: 1.2rem;
+    margin-bottom: 0;
+    font-size: 0.95rem;
+    color: #fff;
+}
+
+.login-card .signup-text a {
+    color: #81d4fa;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.login-card .signup-text a:hover {
+    color: #b3e5fc;
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 480px) {
+    .login-card {
+        width: 90%;
+        padding: 1.5rem;
+    }
+    .login-card h3 {
+        font-size: 1.5rem;
+    }
+    .login-card .form-control {
+        height: 3rem;
+    }
+    .login-card .btn-login {
+        padding: 0.7rem 0;
+    }
+}
+</style>
+
+<div class="login-container" id="login-bg">
+    
+    <!-- Transparent login card -->
+    <div class="card login-card">
+        <h3>Welcome Back</h3>
+
+        {% if error %}
+        <div class="alert alert-danger text-center py-2">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST">
+            <input type="text" class="form-control" 
+                   name="username" placeholder="Enter your username" required>
+            <input type="password" class="form-control" 
+                   name="password" placeholder="Enter your password" required>
+            <button type="submit" class="btn btn-login">Login</button>
+        </form>
+
+        <p class="signup-text">
+            Don’t have an account? <a href="#">Sign up</a>
+        </p>
+    </div>
+</div>
+
+<script>
+// Dynamically set background using Flask URL
+document.getElementById('login-bg').style.backgroundImage = "url('{{ url_for('static', filename='background.jpg') | safe }}')";
+</script>

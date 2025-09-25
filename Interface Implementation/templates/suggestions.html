@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Insights | Customer Churn Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        :root {
+            --primary: #4a6cf7;
+            --secondary: #6c757d;
+            --success: #3cb371;
+            --danger: #ff6b6b;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --dark: #343a40;
+            --light: #f8f9fa;
+            --gradient-primary: linear-gradient(135deg, #4a6cf7 0%, #8a54ff 100%);
+            --gradient-secondary: linear-gradient(135deg, #6c757d 0%, #868e96 100%);
+            --gradient-danger: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            --gradient-warning: linear-gradient(135deg, #ffc107 0%, #ffda6a 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-top: 70px;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: transparent !important;   /* fully transparent */
+            backdrop-filter: blur(6px);           /* keep blur for readability */
+            box-shadow: none;
+        }
+        .navbar-brand { 
+            font-weight: bold; 
+            letter-spacing: 0.5px; 
+            color: white !important; 
+        }
+        .nav-link { 
+            color: #e1f5fe !important; 
+            transition: color 0.2s ease-in-out; 
+        }
+        .nav-link:hover { 
+            color: #81d4fa !important; 
+        }
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-title {
+            font-weight: 800;
+            margin-bottom: 2rem;
+            text-align: center;
+            color : #ffffff;
+            padding-bottom: 0.5rem;
+            position: relative;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #ffcc33, #ff6600);
+            border-radius: 2px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .card-title {
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #fff;
+        }
+
+        .card-title i {
+            font-size: 1.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .stat-item {
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            min-width: 120px;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: #ffffff;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            color: #ffffff;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .insights-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .insights-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: #ffffff;
+        }
+
+        .insights-list li:last-child {
+            border-bottom: none;
+        }
+
+        .insights-list li i {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.1rem;
+            margin-top: 0.2rem;
+        }
+
+        .profile-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .profile-list li {
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffffff;
+        }
+
+        .profile-list li i {
+            color: var(--danger);
+        }
+
+        .actions-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            counter-reset: action-counter;
+        }
+
+        .actions-list li {
+            padding: 1rem 0 1rem 2.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            color: #ffffff;
+        }
+
+        .actions-list li:last-child {
+            border-bottom: none;
+        }
+
+        .actions-list li::before {
+            counter-increment: action-counter;
+            content: counter(action-counter);
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .note-box {
+            background: rgba(255, 193, 7, 0.15);
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.25rem;
+            color: #ffffff;
+        }
+
+        .recommendation-box {
+            background: rgba(58, 179, 113, 0.15);
+            border-left: 4px solid var(--success);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.25rem;
+            color: #ffffff;
+        }
+
+        .text-muted {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+
+        footer {
+            background-color: #0d47a1;
+            color: #e1f5fe;
+            padding: 15px 0;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-container {
+                padding: 1.5rem 1rem;
+            }
+            
+            .glass-card {
+                padding: 1.5rem;
+            }
+            
+            .stats-container {
+                gap: 0.75rem;
+            }
+            
+            .stat-item {
+                min-width: 100px;
+                padding: 0.5rem 1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .profile-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-item {
+                flex: 1 0 calc(50% - 1rem);
+            }
+            
+            body {
+                padding-top: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-chart-line me-2"></i>Churn App
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('home') }}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('data_overview') }}">Data Understanding</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('predict') }}">Prediction</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('model_comparison') }}">Comparison</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('suggestions') }}">Suggestions</a></li>
+                <li class="nav-item"><a class="nav-link active" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+                <li class="nav-item ms-3">
+                    <button id="darkToggle" class="btn btn-sm btn-light">🌙</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="dashboard-container">
+    <!-- Page Title -->
+    <h1 class="page-title display-5">Business Insights & Key Drivers of Customer Churn</h1>
+
+    <!-- 1️⃣ Overall Churn Summary -->
+    <div class="glass-card mb-4">
+        <h3 class="card-title"><i class="fas fa-chart-line"></i> Overall Churn Summary</h3>
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-value">7,043</div>
+                <div class="stat-label">Total Customers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" style="color: #ff6b6b;">1,869</div>
+                <div class="stat-label">Churned</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" style="color: #ffc107;">26.54%</div>
+                <div class="stat-label">Churn Rate</div>
+            </div>
+        </div>
+        <div class="note-box">
+            <i class="fas fa-exclamation-circle me-2"></i> More than 1 in 4 customers are leaving, indicating a significant risk to revenue and the need for immediate retention strategies.
+        </div>
+    </div>
+
+    <!-- 2️⃣ Feature Importance + Insights -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="glass-card h-100">
+                <h3 class="card-title"><i class="fas fa-analytics"></i> Feature Importance</h3>
+                <div class="chart-container">
+                    <div id="feature_importance_plot" style="width:100%;height:350px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="glass-card h-100">
+                <h3 class="card-title"><i class="fas fa-lightbulb"></i> Key Insights</h3>
+                <ul class="insights-list" id="feature_insights">
+                    <!-- Will be populated by JavaScript -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3️⃣ High-Risk Customer Profile -->
+    <div class="glass-card mb-4">
+        <h3 class="card-title"><i class="fas fa-user-slash"></i> High-Risk Customer Profile</h3>
+        <ul class="profile-list">
+            <li><i class="fas fa-file-contract"></i> Month-to-month contract</li>
+            <li><i class="fas fa-wifi"></i> Fiber optic internet service</li>
+            <li><i class="fas fa-shield-alt"></i> No Online Security</li>
+            <li><i class="fas fa-headset"></i> No Tech Support</li>
+            <li><i class="fas fa-credit-card"></i> Pays via Electronic Check</li>
+            <li><i class="fas fa-calendar-alt"></i> Low tenure (0-12 months)</li>
+            <li><i class="fas fa-money-bill-wave"></i> High monthly charges relative to tenure</li>
+        </ul>
+        <div class="chart-container">
+            <div id="high_risk_plot" style="width:100%;height:300px;"></div>
+        </div>
+        <div class="recommendation-box">
+            <i class="fas fa-bullseye me-2"></i> Target this segment for proactive retention campaigns.
+        </div>
+    </div>
+
+    <!-- 4️⃣ Churn by Contract Type -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6">
+            <div class="glass-card h-100">
+                <h3 class="card-title"><i class="fas fa-file-contract"></i> Churn by Contract Type</h3>
+                <div class="chart-container">
+                    <div id="contract_pie_plot" style="width:100%;height:350px;"></div>
+                </div>
+                <div class="note-box">
+                    <i class="fas fa-exclamation-circle me-2"></i> Month-to-month customers are the largest contributors to churn. Consider incentives to switch to longer contracts.
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="glass-card h-100">
+                <h3 class="card-title"><i class="fas fa-history"></i> Churn Rate vs. Customer Tenure</h3>
+                <div class="chart-container">
+                    <div id="tenure_churn_plot" style="width:100%;height:350px;"></div>
+                </div>
+                <div class="recommendation-box">
+                    <i class="fas fa-lightbulb me-2"></i> Churn is highest in the first 3 months. Strong onboarding and early engagement can reduce early churn.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5️⃣ Recommended Business Actions -->
+    <div class="glass-card">
+        <h3 class="card-title"><i class="fas fa-rocket"></i> Recommended Business Actions</h3>
+        <ul class="actions-list">
+            <li>Offer a discount for month-to-month customers to switch to annual contracts.</li>
+            <li>Send quarterly "Value Reports" to high-monthly-charge customers showing usage and benefits.</li>
+            <li>Automate onboarding emails for new customers (0-3 months) with tutorials and check-ins.</li>
+            <li>Bundle online security and tech support into packages with small discounts.</li>
+        </ul>
+    </div>
+</div>
+
+<footer>
+    <p class="mb-0">© 2025 Churn Prediction App | Designed with ❤️</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Sample data - in a real application, this would come from your backend
+    const features = [
+        {feature: "Tenure", importance: 0.19, insight: "New customers are at the highest risk", action: "Create onboarding program for first 60 days"},
+        {feature: "Contract Type", importance: 0.17, insight: "Month-to-month customers churn more", action: "Incentivize longer contracts"},
+        {feature: "Total Charges", importance: 0.11, insight: "Low-spending customers churn more", action: "Increase engagement among low-spending segments"},
+        {feature: "Monthly Charges", importance: 0.10, insight: "High monthly fees increase sensitivity", action: "Offer personalized value reviews"},
+        {feature: "Online Security", importance: 0.08, insight: "Lack of security increases churn", action: "Bundle security into main packages"},
+        {feature: "Tech Support", importance: 0.07, insight: "No tech support increases frustration", action: "Offer free tech support trial"}
+    ];
+
+    const contracts = [
+        {contract: "Month-to-month", churn_count: 1655},
+        {contract: "One year", churn_count: 166},
+        {contract: "Two year", churn_count: 48}
+    ];
+
+    const tenure = [
+        {month: 1, churn_rate: 45},
+        {month: 2, churn_rate: 38},
+        {month: 3, churn_rate: 32},
+        {month: 6, churn_rate: 25},
+        {month: 12, churn_rate: 18},
+        {month: 24, churn_rate: 12},
+        {month: 36, churn_rate: 8},
+        {month: 48, churn_rate: 6},
+        {month: 60, churn_rate: 5}
+    ];
+
+    // Populate Key Insights
+    const insightsContainer = document.getElementById('feature_insights');
+    features.forEach(f => {
+        const li = document.createElement('li');
+        li.innerHTML = `<i class="fas fa-arrow-circle-right"></i><div><strong>${f.feature}</strong>: ${f.insight}<br><span class="text-muted">Action: ${f.action}</span></div>`;
+        insightsContainer.appendChild(li);
+    });
+
+    // 1️⃣ Feature Importance Bar Chart
+    Plotly.newPlot('feature_importance_plot', [{
+        x: features.map(f => f.importance).reverse(),
+        y: features.map(f => f.feature).reverse(),
+        type: 'bar',
+        orientation: 'h',
+        marker: { 
+            color: features.map(f => f.importance > 0.1 ? '#ff6b6b' : '#4a6cf7'),
+            line: {
+                width: 1,
+                color: 'rgba(255, 255, 255, 0.2)'
+            }
+        },
+        text: features.map(f => f.importance.toFixed(2)),
+        textposition: 'auto',
+        hovertemplate: '<b>%{y}</b><br>Importance: %{x}<extra></extra>'
+    }], {
+        margin: {t: 30, l: 150, r: 30, b: 40},
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: {color: '#ffffff'},
+        xaxis: {
+            title: 'Feature Importance',
+            gridcolor: 'rgba(255, 255, 255, 0.1)',
+            zerolinecolor: 'rgba(255, 255, 255, 0.1)'
+        },
+        yaxis: {
+            gridcolor: 'rgba(255, 255, 255, 0.1)',
+            zerolinecolor: 'rgba(255, 255, 255, 0.1)'
+        }
+    });
+
+    // 2️⃣ High-Risk Customer Pie Chart - Updated with brighter colors
+    Plotly.newPlot('high_risk_plot', [{
+        labels: ["Month-to-month","Fiber Optic","No Security","No Tech Support","Electronic Check","Low Tenure","High Charges"],
+        values: [25,20,15,10,10,10,10],
+        type: 'pie',
+        marker: { colors: ['#FF6F61', '#4ECDC4', '#FFE66D', '#FF9F1C', '#6A0572', '#06D6A0', '#118AB2'] },
+        textinfo: 'label+percent',
+        textfont: { color: '#ffffff' },
+        hoverinfo: 'label+value',
+        hole: 0.4,
+        rotation: 45
+    }], {
+        margin: {t: 30, l: 0, r: 0, b: 0},
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: {color: '#ffffff'},
+        showlegend: true,
+        legend: {
+            orientation: 'h',
+            y: -0.1,
+            font: { color: '#ffffff' }
+        }
+    });
+
+    // 3️⃣ Contract Type Pie Chart - Updated with brighter colors
+    Plotly.newPlot('contract_pie_plot', [{
+        labels: contracts.map(c => c.contract),
+        values: contracts.map(c => c.churn_count),
+        type: 'pie',
+        marker: { colors: ['#FF6F61','#4ECDC4','#FFE66D'] },
+        textinfo: 'label+percent',
+        textfont: { color: '#ffffff' },
+        hoverinfo: 'label+value'
+    }], {
+        margin: {t: 30, l: 0, r: 0, b: 0},
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: {color: '#ffffff'},
+        showlegend: true,
+        legend: {
+            orientation: 'h',
+            y: -0.1,
+            font: { color: '#ffffff' }
+        }
+    });
+
+    // 4️⃣ Churn vs Tenure Line Graph
+    Plotly.newPlot('tenure_churn_plot', [{
+        x: tenure.map(t => t.month),
+        y: tenure.map(t => t.churn_rate),
+        type: 'scatter',
+        mode: 'lines+markers',
+        line: {
+            color: '#4ECDC4',
+            width: 3,
+            shape: 'spline'
+        },
+        marker: {
+            size: 8,
+            color: '#FF6F61',
+            line: {
+                width: 1,
+                color: 'white'
+            }
+        },
+        fill: 'tozeroy',
+        fillcolor: 'rgba(78, 205, 196, 0.1)'
+    }], {
+        margin: {t: 30, l: 60, r: 30, b: 50},
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: {color: '#ffffff'},
+        xaxis: {
+            title: 'Tenure (Months)',
+            gridcolor: 'rgba(255, 255, 255, 0.1)',
+            zerolinecolor: 'rgba(255, 255, 255, 0.1)'
+        },
+        yaxis: {
+            title: 'Churn Rate (%)',
+            gridcolor: 'rgba(255, 255, 255, 0.1)',
+            zerolinecolor: 'rgba(255, 255, 255, 0.1)'
+        }
+    });
+
+    // Dark mode toggle
+    const toggle = document.getElementById("darkToggle");
+    if(toggle){
+        toggle.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+            toggle.textContent = document.body.classList.contains("dark-mode") ? "☀️" : "🌙";
+        });
+    }
+</script>
+</body>
+</html>

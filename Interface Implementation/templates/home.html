@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero-section d-flex justify-content-center align-items-center text-center text-white">
+  <div class="overlay"></div>
+  <div class="hero-content">
+    <h1 class="display-3 fw-bold animate__animated animate__fadeInDown">
+      Predict Customer <span class="highlight">Churn</span> with AI
+    </h1>
+    <p class="lead mb-4 animate__animated animate__fadeInUp">
+      Smart, data-driven insights to retain customers and grow your business 🚀
+    </p>
+    <a href="{{ url_for('predict') }}" class="btn btn-lg btn-gradient px-5 py-3 fw-semibold me-2 animate__animated animate__fadeInLeft">
+       Get Started
+    </a>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-lg btn-outline-light px-5 py-3 fw-semibold animate__animated animate__fadeInRight">
+       View Dashboard
+    </a>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 features-section">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-5 section-title">Why Choose Our App?</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="mb-3 icon-container"><i class="bi bi-graph-up-arrow display-5"></i></div>
+          <h5 class="fw-bold">Accurate Predictions</h5>
+          <p>AI & ML models trained on customer data ensure high accuracy in churn forecasts.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="mb-3 icon-container"><i class="bi bi-speedometer2 display-5"></i></div>
+          <h5 class="fw-bold">Interactive Dashboard</h5>
+          <p>Visualize churn trends, KPIs, and customer metrics in real-time.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card text-center p-4 h-100">
+          <div class="mb-3 icon-container"><i class="bi bi-cloud-upload display-5"></i></div>
+          <h5 class="fw-bold">Bulk Predictions</h5>
+          <p>Upload CSV/Excel files and instantly get churn predictions at scale.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 call-to-action-section text-center text-white">
+  <div class="container">
+    <h2 class="fw-bold mb-3">Ready to Reduce Churn?</h2>
+    <p class="lead mb-4">Start predicting customer churn today and take control of your business growth.</p>
+    <a href="{{ url_for('predict') }}" class="btn btn-lg btn-gradient px-5 py-3 fw-semibold">Try Now</a>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<style>
+/* Hero Section */
+.hero-section {
+  height: 100vh;
+  width: 100%;
+  background: url('{{ url_for("static", filename="background.jpg") }}') no-repeat center center/cover;
+  position: relative;
+  overflow: hidden;
+}
+.hero-section .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35); /* subtle overlay */
+  z-index: 1;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+.highlight { color: #81d4fa; }
+
+/* Section Titles */
+.section-title { color: #e1f5fe; }
+
+/* Gradient Buttons */
+.btn-gradient {
+  background: linear-gradient(135deg, #42a5f5, #81d4fa);
+  color: #1e3c72;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+.btn-gradient:hover {
+  background: linear-gradient(135deg, #64b5f6, #b3e5fc);
+  transform: translateY(-3px) scale(1.02);
+  color: #0d214d;
+  text-decoration: none;
+  box-shadow: 0 0 15px rgba(129,212,250,0.6);
+}
+
+/* Features */
+.features-section { background-color: #1e3c72; }
+.feature-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+  color: #e1f5fe;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+.icon-container {
+  color: #81d4fa;
+  text-shadow: 0 0 12px rgba(129,212,250,0.7);
+}
+
+/* CTA */
+.call-to-action-section {
+  background: linear-gradient(135deg, #0d47a1, #1976d2);
+}
+</style>
+{% endblock %}

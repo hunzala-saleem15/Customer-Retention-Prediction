@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="py-5">
+  <div class="container">
+
+    <!-- Page Title -->
+    <h2 class="mb-5 text-center fw-bold display-6 text-gradient">
+      ⚖️ Comparison of Model Performance
+    </h2>
+
+    <!-- Model Performance Table -->
+    <div class="glass-card p-4 mb-5">
+      <h5 class="text-primary fw-bold mb-3">📊 Detailed Performance Metrics</h5>
+      <div class="table-responsive">
+        <table class="table align-middle text-center table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Model Name</th>
+              <th>Accuracy (%)</th>
+              <th>Precision (%)</th>
+              <th>Recall (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in comparison_data %}
+            <tr>
+              <td class="fw-semibold">{{ row.model }}</td>
+              <td>{{ row.accuracy }}</td>
+              <td>{{ row.precision }}</td>
+              <td>{{ row.recall }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Plots Section -->
+    {% set models = {
+      'lr': 'Logistic Regression',
+      'rf': 'Random Forest',
+      'nn': 'Neural Network',
+      'ensemble': 'Ensemble Methods'
+    } %}
+    {% set plot_types = ['confusion_matrix', 'evaluation_matrix', 'precision_recall', 'roc_curve'] %}
+
+    {% for key, full_name in models.items() %}
+      <h4 class="fw-bold mt-5 mb-4 text-gradient text-center">
+        {{ full_name }} Visualization
+      </h4>
+      <div class="row g-4 mb-5">
+        {% for plot_type in plot_types %}
+          {% set filename = key + '_' + plot_type + '.png' %}
+          <div class="col-md-6 col-lg-3">
+            <div class="glass-card p-3 h-100 text-center">
+              <h6 class="fw-bold mb-3">
+                {{ plot_type.replace('_',' ').title() }}
+              </h6>
+              <img src="{{ url_for('static', filename='plots/' + filename) }}" 
+                   alt="{{ filename }}" class="img-fluid rounded">
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<style>
+/* Gradient text for headings */
+.text-gradient {
+  background: linear-gradient(135deg, #42a5f5, #81d4fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glassmorphism effect for cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 1rem;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.45);
+}
+
+/* Chart images styling */
+.glass-card img {
+  max-height: 200px;
+  width: 100%;
+  object-fit: contain;
+  border-radius: 0.75rem;
+}
+</style>
+{% endblock %}

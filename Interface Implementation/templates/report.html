@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="py-5">
+  <div class="container">
+
+    <!-- Title -->
+    <h2 class="mb-5 text-center fw-bold display-6 text-gradient">
+      📊 Prediction Report
+    </h2>
+
+    <div class="row g-4">
+      
+      <!-- Input Features -->
+      <div class="col-lg-5">
+        <div class="glass-card p-4 h-100">
+          <h5 class="fw-bold mb-3 text-white">
+            📝 Input Features
+          </h5>
+          <ul class="list-group list-group-flush">
+            {% for feature, value in raw_input.items() %}
+            <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent text-white border-light">
+              <span class="fw-semibold">{{ feature.replace('_',' ') }}</span>
+              <span class="badge bg-white text-dark px-3 py-2 shadow-sm">{{ value }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <!-- Prediction Results -->
+      <div class="col-lg-7">
+        <div class="glass-card p-4 h-100">
+          <h5 class="fw-bold mb-3 text-white">
+            🤖 Prediction Results
+          </h5>
+          <div class="table-responsive">
+            <table class="table align-middle text-center table-hover mb-0">
+              <thead class="table-light text-white">
+                <tr>
+                  <th>Model</th>
+                  <th>Prediction</th>
+                  <th>Probability (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for model, res in results.items() %}
+                <tr class="text-white">
+                  <td class="fw-semibold">{{ model }}</td>
+                  <td>
+                    {% if res.prediction == "Churn" %}
+                      <span class="badge bg-danger px-3 py-2 shadow-sm">{{ res.prediction }}</span>
+                    {% else %}
+                      <span class="badge bg-success px-3 py-2 shadow-sm">{{ res.prediction }}</span>
+                    {% endif %}
+                  </td>
+                  <td class="fw-semibold">{{ res.probability }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Graphs Section -->
+    <div class="row g-4 mt-4">
+      {% for graph in graphs_html %}
+      <div class="col-lg-6">
+        <div class="glass-card p-3">
+          {{ graph | safe }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<style>
+/* Gradient text */
+.text-gradient {
+  background: linear-gradient(135deg, #42a5f5, #81d4fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glassmorphism card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 1rem;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: #fff; /* Make all card text white by default */
+}
+.glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.45);
+}
+
+/* Table styling */
+.table thead {
+  background: linear-gradient(135deg, #42a5f5, #81d4fa);
+  color: #fff;
+}
+.table-hover tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Graphs spacing */
+.glass-card iframe {
+  width: 100% !important;
+  height: 380px !important;
+  border: none;
+}
+
+/* Ensure badges in input features are still visible */
+.list-group-item .badge {
+  background-color: #fff;
+  color: #000;
+}
+</style>
+{% endblock %}
+
